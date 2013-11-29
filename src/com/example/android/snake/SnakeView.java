@@ -311,6 +311,53 @@ public class SnakeView extends TileView {
         return super.onKeyDown(keyCode, msg);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+    	int action = event.getAction();
+
+        if (action == MotionEvent.ACTION_DOWN) {
+            if (mMode == READY | mMode == LOSE) {
+                /*
+                 * At the beginning of the game, or the end of a previous one,
+                 * we should start a new game.
+                 */
+                initNewGame();
+                setMode(RUNNING);
+                update();
+                return (true);
+            }
+            if (mMode == PAUSE) {
+                /*
+                 * If the game is merely paused, we should just continue where
+                 * we left off.
+                 */
+                setMode(RUNNING);
+                update();
+                return (true);
+            }
+        }
+    	int h = getHeight();
+    	int w = getWidth();
+        int x = (int) event.getX();
+        int y = (int) event.getY();
+        int y1 = x*h/w;
+        int y2 = (w-x)*h/w;
+        if(y>y1)
+        {
+        	if(y>y2)
+        		mNextDirection = SOUTH;
+        	else
+        		mNextDirection = WEST;
+        }else
+        {
+        	if(y>y2)
+        		mNextDirection = EAST;
+        	else
+        		mNextDirection = NORTH;
+        }
+        return true;
+    }
     
     /**
      * Sets the TextView that will be used to give information (such as "Game
